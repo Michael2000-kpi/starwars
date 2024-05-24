@@ -1,0 +1,207 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background:#2F4F4F;
+}
+
+.container {
+  display: grid;
+  grid-template-rows: 80px auto 1fr auto 50px;
+  grid-template-columns: 1fr 4fr 1fr;
+  height: 100vh;
+  grid-template-areas:
+    "header        header        header"
+    "left-aside    banner        right-aside"
+    "left-aside    main          right-aside"
+    "left-aside    low-content   right-aside"
+    "footer        footer        footer";
+  grid-gap: 10px;
+  padding: 10px;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.header {
+  grid-area: header;
+  padding: 20px;
+  text-align: center;
+  background:#D2B48C;
+}
+
+.left-aside {
+  grid-area: left-aside;
+  padding: 20px;
+  background:#008B8B;
+}
+
+.main {
+  grid-area: main;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.banner {
+  grid-area: banner;
+  padding: 20px;
+  text-align: center;
+}
+
+.right-aside {
+  grid-area: right-aside;
+  padding: 20px;
+  background:#008B8B;
+}
+
+.low-content {
+  grid-area: low-content;
+  padding: 20px;
+}
+
+.footer {
+  grid-area: footer;
+  padding: 20px;
+  text-align: center;
+}
+
+.column {
+  display: flex; /* Arrange the two lists side-by-side */
+  width: 100%; /* Ensure columns fill the available width */
+}
+
+.firstColumn,
+.secondColumn {
+  display: flex;
+  flex: 1; /* Make each list take up half the available width */
+  flex-direction: column;
+  padding: 10px;
+  list-style-type: none;
+  text-decoration:none;
+}
+
+.person-box {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 5px;
+  background-color: #f9f9f9;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  list-style: none;
+}
+
+.pagination li {
+  margin: 0 5px;
+}
+
+.pagination li a {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-decoration: none;
+  color: #333;
+}
+
+.pagination li.active a {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+}
+.filter {
+  color: white;
+  background-color: #616161;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #333;
+  border-radius: 5px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.filter:hover {
+  background-color: #757575;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown {
+  padding: 5px;
+  border: none;
+  border-radius: 3px;
+  transition: all 0.3s;
+  background-color: #333;
+  color: white;
+}
+
+.dropdown:focus {
+  outline: none;
+  box-shadow: 0 0 5px 2px rgba(255, 255, 255, 0.5);
+  animation: pulse 1s infinite;
+}
+/* App.css */
+/* App.css */
+.person-box {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 5px;
+  background-color: #f9f9f9;
+}
+
+.button {
+  margin: 10px;
+  margin-left: 45%;
+  display: flex;
+  padding: 10px;
+  background-color: #0f820f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+/* Add styles for React Flow components if necessary */
+.reactflow-wrapper {
+  height: 100%;
+  width: 100%;
+}
+
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 5px 2px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 5px 2px rgba(255, 255, 255, 0.5);
+  }
+}
+
+
+@media (max-width: 678px) {
+  .container {
+    grid-template-rows: 50px 50px 50px 1fr 50px 50px 50px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "banner"
+      "left-aside"
+      "main"
+      "right-aside"
+      "low-content"
+      "footer";
+  }
+}
