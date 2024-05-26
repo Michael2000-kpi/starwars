@@ -33,14 +33,23 @@ const App = () => {
   useEffect(() => {
     const fetchPeople = async () => {
       try {
-        const response = await axios.get(
-          `https://sw-api.starnavi.io/people/?page=${currentPage + 1}`
-        );
+        // Define the base URL for fetching people
+        let url = `https://sw-api.starnavi.io/people/?page=${currentPage + 1}`;
+
+        // Append sorting parameter to the URL
+        url += `&ordering=${sortBy}`;
+
+        // Perform the API request
+        const response = await axios.get(url);
+
+        // Sort the response data based on the sorting parameter
         const sortedPeople = [...response.data.results].sort((a, b) => {
           if (a[sortBy] < b[sortBy]) return -1;
           if (a[sortBy] > b[sortBy]) return 1;
           return 0;
         });
+
+        // Set the sorted people data and calculate the page count
         setPeople(sortedPeople);
         setPageCount(Math.ceil(response.data.count / itemsPerPage));
       } catch (error) {

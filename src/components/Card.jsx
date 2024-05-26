@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
+import axios from "axios";
 import ReactFlow, {
   Background,
   useNodesState,
@@ -16,46 +17,90 @@ const createNode = (id, label, value, position) => ({
   data: { label: `${label}: ${value}` },
 });
 
+const createEdge = (source, target) => ({
+  id: `edge-${source}-${target}`,
+  source,
+  target,
+  type: "default",
+});
+
 // Card component to display person details in a graph using React Flow
 const Card = ({ person, onBack }) => {
-  // Ref for React Flow wrapper
   const reactFlowWrapper = useRef(null);
-  // State for React Flow instance
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
-  // State for nodes and edges using React Flow hooks
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  // Function to initialize React Flow instance
   const onInit = (reactFlowInstance) => setReactFlowInstance(reactFlowInstance);
 
   useEffect(() => {
-    // Create nodes based on person details when person prop changes
-    if (person) {
-      const personDetails = [
-        { label: "Name", value: person.name },
-        { label: "Height", value: person.height },
-        { label: "Mass", value: person.mass },
-        { label: "Hair Color", value: person.hair_color },
-        { label: "Skin Color", value: person.skin_color },
-        { label: "Eye Color", value: person.eye_color },
-        { label: "Birth Year", value: person.birth_year },
-        { label: "Gender", value: person.gender },
-      ];
+    const fetchFilmsAndStarships = async () => {
+      if (person) {
+        try {
+          const personDetails = [{ label: "Name", value: person.name }];
 
-      // Map person details to create nodes
-      const newNodes = personDetails.map((detail, index) =>
-        createNode(`node-${index}`, detail.label, detail.value, {
-          x: 0,
-          y: index * 80, // Position each node vertically
-        })
-      );
+          const newNodes = personDetails.map((detail, index) =>
+            createNode(`node-person-${index}`, detail.label, detail.value, {
+              x: 0,
+              y: index * 80,
+            })
+          );
 
-      setNodes(newNodes); // Set nodes state
-    }
-  }, [person, setNodes]);
+          setNodes(newNodes);
 
-  // Function to handle node connection
+          // Fetch films
+          const filmResponses = await axios.get(
+            "https://sw-api.starnavi.io/films/"
+          );
+          const filmNodes = filmResponses.data.results.map((film, index) => {
+            return createNode(`node-film-${index}`, "Film", film.title, {
+              x: 300,
+              y: index * 80,
+            });
+          });
+
+          setNodes((nds) => nds.concat(filmNodes));
+
+          const filmEdges = filmNodes.map((filmNode) =>
+            createEdge("node-person-0", filmNode.id)
+          );
+
+          setEdges(filmEdges);
+
+          // Fetch starships
+          const starshipResponses = await axios.get(
+            "https://sw-api.starnavi.io/starships/"
+          );
+          const starshipNodes = starshipResponses.data.results.map(
+            (starship, index) => {
+              return createNode(
+                `node-starship-${index}`,
+                "Starship",
+                starship.name,
+                {
+                  x: 600,
+                  y: index * 80,
+                }
+              );
+            }
+          );
+
+          setNodes((nds) => nds.concat(starshipNodes));
+
+          const starshipEdges = starshipNodes.map((starshipNode) =>
+            createEdge(`node-film-0`, starshipNode.id)
+          );
+
+          setEdges((eds) => eds.concat(starshipEdges));
+        } catch (error) {
+          console.error("Error fetching data:", error); // Improved error handling
+        }
+      }
+    };
+
+    fetchFilmsAndStarships();
+  }, [person, setNodes, setEdges]);
+
   const onConnect = useCallback(
     (params) =>
       setEdges((eds) =>
@@ -66,15 +111,12 @@ const Card = ({ person, onBack }) => {
 
   return (
     <div>
-      {/* Back button */}
       <button className="button" onClick={onBack}>
         Back
       </button>
-      {/* React Flow container */}
       <div style={{ height: 800, width: 800 }}>
         <ReactFlowProvider>
           <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-            {/* React Flow component */}
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -84,7 +126,6 @@ const Card = ({ person, onBack }) => {
               onInit={onInit}
               attributionPosition="top-right"
             >
-              {/* Background for React Flow */}
               <Background color="#aaa" gap={16} />
             </ReactFlow>
           </div>
